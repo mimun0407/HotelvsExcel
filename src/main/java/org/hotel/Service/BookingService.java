@@ -1,10 +1,7 @@
 package org.hotel.Service;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hotel.Model.*;
 
@@ -66,6 +63,52 @@ public class BookingService {
             System.out.format(leftAlignFormat, bill.getRoom().getRoomName(), bill.getIdBill(),bill.getDate(),bill.getPrice(),bill.getCustomer().getCustomerName());
         }
         System.out.format("+-----------------+------+----------------------------+-------+-------------|%n");
+    }
+    public void ExportFile() throws IOException {
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+        String filePath = "/home/dang/Bản tải về/FileExcel/Bills_" + dateStr + ".xlsx";
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Bills");
+
+        // Tạo header row
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"Room Name", "ID", "Date", "Price ($)", "Customer"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+
+            CellStyle style = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            style.setFont(font);
+            cell.setCellStyle(style);
+        }
+
+        // Ghi dữ liệu từ bills vào các hàng tiếp theo
+        int rowIndex = 1;
+        for (Bill bill : bills.values()) {
+            Row row = sheet.createRow(rowIndex++);
+
+            row.createCell(0).setCellValue(bill.getRoom().getRoomName());
+            row.createCell(1).setCellValue(bill.getIdBill());
+            row.createCell(2).setCellValue(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(bill.getDate()));
+            row.createCell(3).setCellValue(bill.getPrice());
+            row.createCell(4).setCellValue(bill.getCustomer().getCustomerName());
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+            System.out.println("Excel file created successfully at: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            workbook.close();
+        }
     }
 
     public void add(Room room, Customer customer, HotelSer hotel) {
@@ -174,7 +217,6 @@ public class BookingService {
         }
         return false;
     }
-
     public int getRoomId(Customer customer) {
         RoomCustomer customer1=  roomCustomerMap
                 .values()

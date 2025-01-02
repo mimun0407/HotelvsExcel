@@ -64,9 +64,10 @@ public class Main {
 
                 switch (admin) {
                     case 1:
-                        bookingService.getAllBill(fileName);
+                        fileController();
                         break;
                     case 2:roomService.RoomNotBooked();
+                    break;
                     default:
                         System.out.println("Invalid option. Please try again.");
                         continue;
@@ -149,5 +150,17 @@ public class Main {
             }
         }
 
+    }
+    public static void fileController() throws IOException, ParseException {
+        Scanner input = new Scanner(System.in);
+        bookingService.getAllBill(fileName);
+        System.out.println("\n1. export file \n2. exit");
+        int option = Validation.getValidInteger(input, "Please enter a valid number (1-2):");
+        if (option == 1) {
+            bookingService.ExportFile();
+        }
+        if (option == 2) {
+            System.out.println(" ");
+        }
     }
 }
