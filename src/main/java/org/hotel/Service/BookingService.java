@@ -45,7 +45,7 @@ public class BookingService {
             Cell price=row.getCell(2);
             Cell userName=row.getCell(4);
             if (idBill==null){
-                break;
+                continue;
             }
             int id=(int) idBill.getNumericCellValue();
             String name=roomName.getStringCellValue();

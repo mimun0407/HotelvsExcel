@@ -25,12 +25,9 @@ public class HotelService {
             Cell idCell = row.getCell(0);
             Cell priceCell = row.getCell(1);
             Cell nameCell = row.getCell(2);
-
             if (idCell == null || priceCell == null || nameCell == null) {
                 break;
             }
-
-
             int id = (int) idCell.getNumericCellValue();
             int price = (int) priceCell.getNumericCellValue();
             String serviceName = nameCell.getStringCellValue();
